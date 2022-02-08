@@ -6,7 +6,7 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 ### Milestones
 1. Generate plots.
 	1. Load data using `pandas`.
-	2. Transform data into a usable structure.
+	2. <strike>Transform data into a usable structure.</strike> Add `seconds_since_epoch` column to all dataframes, denoting the time in seconds since Januari 1st 2010.
 	3. Create necessary plots using `matplotlib` and save them to `plots` folder.
 2. Create interface.
 	1. Decide on global layout and create image out of it.
@@ -30,4 +30,9 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *14:16*: Add `src/load_data.py`.<br />
 *14:18*: Install libraries `pandas` and `matplotlib` and their dependencies.<br />
 *14:19*: Rename `src/load_data.py` to `src/generate_plots.py`.<br />
-*14:36*: Implemented function `src/generate_plots.py:load_data(username)` which loads only the CSV files in the specified `username` folder and returns a dictionary containing dataframes generated from these files. Raises an exception if the folder `username` does not exists.<br />
+*14:36*: Implemented function `src/generate_plots.py:load_data(username)` which loads only the CSV files in the specified `username` folder and returns a dictionary containing dataframes generated from these files. Raises an exception if the folder `username` does not exists. This implementation satisfies `milestone 1.1`.<br />
+*14:42*: Commit changes to branch `generate-plots`.<br />
+*14:42*: Stop development.<br /><br />
+*15:31*: Start development.<br />
+*15:36*: Removed `milestone 1.2` and replaced it with the new, not struck through, milestone.<br />
+*16:13*: Implemented function `src/generate_plots.py:add_time_column(lang_dict)` which adds an extra column to all dataframes named `seconds_since_epoch`, which contains the amount of seconds passed since Januari 1st 2010. This implementation satisfies `milestone 1.2`.
