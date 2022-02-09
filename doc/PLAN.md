@@ -34,6 +34,11 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *21:30*: Plots for all the required columns now get saved to the correct location. The only thing left to do this milestone is adding custom ticks for the x-axis.<br />
 *21:48*: Implemented custom ticks for the x-axis, limits for the x-axis and applied a tight layout to all plots.<br />
 *21:50*: Added `milestone 3.1`.<br />
+*21.55*: Added `figures` folder to `.gitignore`.<br />
+*21:59*: Commit changes to branch `generate-plots`.<br />
+*22:03*: Merge branch `generate-plots` into `main`.<br />
+*22:04*: Push to origin main (`git push origin main`) to update network graph of the github repository.<br />
+*22:07*: Create file `doc/requirements.txt` from the command `pip freeze > doc/requirements.txt`. This file lists all necessary libraries.<br />
 
 #### 08-02-2021
 *13:07*: Start development.<br />
