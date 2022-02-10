@@ -20,6 +20,23 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 	1. Add plots with data from all languages combined.
 
 ### Log
+### 10-02-2022
+*10:51*: Start development.<br />
+*11:05*: Created layout images for the loading screen and the main window. These are saved as `doc/images/loading_screen_layout_v1.png` and `doc/images/main_window_layout_v1.png` respectively.<br />
+*11:08*: Created branch `gui-development`.<br />
+*11:35*: It took about 25 minutes to install the `wxPython` library correctly. The issue was that python 3.10 was not yet supported by `wxPython` 4.1.1. Following this [issue](https://github.com/wxWidgets/Phoenix/issues/2089) I installed `wxPython` version `4.1.2a1.dev5304+7c8318e8`, which works as expected when creating a basic window.<br />
+*11:42*: Commit changes made to the `doc/images/` folder to branch `gui-development`.<br />
+*11:42*: Stop development.<br /><br />
+
+*13:08*: Start development.<br />
+*13:44*: Added a panel, added a title sizer and a content sizer to the panel. Added text to the title sizer.<br />
+*13:59*: Added buttons to relevant sizers to see the size of the sizers when the buttons are expanded to full sizer.<br />
+*14:01*: Stop development.<br /><br />
+
+*15:17*: Start development.<br />
+*15:23*: The buttons are in place and working and ready to be replaced by actual components. This satisfies milestone 2.2.<br />
+
+
 ### 09-02-2022
 *13:16*: Start development.<br />
 *13:32*: Started implementing function `src/generate_plots.py:export_plots(lang_dict, username)`. It automatically creates the folder `figures/{username}` if it does not exist.<br />
@@ -39,6 +56,8 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *22:03*: Merge branch `generate-plots` into `main`.<br />
 *22:04*: Push to origin main (`git push origin main`) to update network graph of the github repository.<br />
 *22:07*: Create file `doc/requirements.txt` from the command `pip freeze > doc/requirements.txt`. This file lists all necessary libraries.<br />
+*22:09*: Delete branch `generate-plots` by running the command `git branch -d generate-plots`, as this branch is not needed anymore.<br />
+*22:10*: Stop development.<br /><br />
 
 #### 08-02-2021
 *13:07*: Start development.<br />
@@ -65,4 +84,4 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *16:13*: Implemented function `src/generate_plots.py:add_time_column(lang_dict)` which adds an extra column to all dataframes named `seconds_since_epoch`, which contains the amount of seconds passed since Januari 1st 2010. This implementation satisfies `milestone 1.2`.<br />
 *16:22*: Commit changes to branch `generate-plots`.<br />
 *16:27*: Added substeps to `milestone 1.3` containing the four plots to generate per language.<br/>
-*16:28*: Stop development.<br/><br/>
+*16:28*: Stop development.
