@@ -15,11 +15,28 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 2. Create interface.
 	1. Decide on global layout and create image out of it.
 	2. Implement global layout in `wxPython`.
-	3. Implement the components of the interface.
+	3. Implement the components of the interface (front-end).
+	4. Implement the components of the interface (back-end).
 3. Additional functionality.
 	1. Add plots with data from all languages combined.
+	2. Implement loading screen for when generating plots.
+	3. Abstract text into separate language file in order to support multiple languages.
 
 ### Log
+### 11-02-2022
+*13:30*: Start development.<br />
+*13:33*: Added restriction `(front-end)` to `milestone 2.3`.<br />
+*13:33*: Added `milestoen 2.4`.<br />
+*14:29*: Replaced the `wx.GridSizer` for user input with a `wx.GridBagSizer`, which is way easier to work with. The the labels in the gridsizer are more or less centered (the flag has been set and after a lot of tweaking I decided it is not *that* important). The `Regenerate plots` button spans two columns now.<br />
+*14:32*: Stop development.<br /><br />
+
+*15:29*: Start development.<br />
+*15:33*: The title text sizer is now fixed size, which means only the plot will change size as the window changes size.<br />
+*15:58*: The plot sizer now contains the dummy image `doc/images/loading_screen_layout_v1.png`. It does not yet resize with the window, this is part of back-end development.<br />
+*16:01*: Changed window title and title text to `Duolingo Data Visualizer`. Window title was `Hello world` and the title text was `Duolingo Statistics Viewer`.<br />
+*16:04*: Updated `doc/requirements.txt`.<br />
+
+
 ### 10-02-2022
 *10:51*: Start development.<br />
 *11:05*: Created layout images for the loading screen and the main window. These are saved as `doc/images/loading_screen_layout_v1.png` and `doc/images/main_window_layout_v1.png` respectively.<br />
@@ -35,7 +52,14 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 
 *15:17*: Start development.<br />
 *15:23*: The buttons are in place and working and ready to be replaced by actual components. This satisfies milestone 2.2.<br />
-
+*15:25*: Commit changes to branch `gui-development`.<br />
+*15:27*: Added `milestone 3.2`.<br />
+*15:45*: Added `milestone 3.3`.<br />
+*16:38*: Computer crashed, lost no progress.<br />
+*17:12*: Still confused as to why it crashed. The last thing I did was take a screenshot with lightshot, but maybe it was just correlation.<br />
+*17:15*: At this point the window has a title up top, below that it has a fixed size grid containing 2 labels on the left and 2 dropdowns on the right, and to the right of that it still has a big button representing the space reserved for plots.<br />
+*17:23*: The things to do next are: center the labels vertically in the user input gridsizer, add a button to the gridsizer spanning two columns.<br />
+*17:24*: Stop development.
 
 ### 09-02-2022
 *13:16*: Start development.<br />
@@ -57,7 +81,7 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *22:04*: Push to origin main (`git push origin main`) to update network graph of the github repository.<br />
 *22:07*: Create file `doc/requirements.txt` from the command `pip freeze > doc/requirements.txt`. This file lists all necessary libraries.<br />
 *22:09*: Delete branch `generate-plots` by running the command `git branch -d generate-plots`, as this branch is not needed anymore.<br />
-*22:10*: Stop development.<br /><br />
+*22:10*: Stop development.
 
 #### 08-02-2021
 *13:07*: Start development.<br />
