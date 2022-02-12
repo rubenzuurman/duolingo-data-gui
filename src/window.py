@@ -1,3 +1,5 @@
+import os
+
 import wx
 
 class MainWindow(wx.Frame):
@@ -5,7 +7,7 @@ class MainWindow(wx.Frame):
 	This class represents the main window and its contents.
 	"""
 
-	def __init__(self, parent, title):
+	def __init__(self, parent, title, username):
 		"""
 		Initialize superclass, add sizers with content returned from 
 		functions, and show the window.
@@ -13,6 +15,23 @@ class MainWindow(wx.Frame):
 		# Initialize superclass.
 		wx.Frame.__init__(self, parent, title=title, size=(1280, 720))
 
+		# Save username variable.
+		self.username = username
+
+		# Load plot images from figures/ folder and create choice option list.
+		self.load_images(username)
+
+		# Init UI.
+		self.init_ui()
+
+		# Initial image update.
+		self.update_image()
+
+		# Show window.
+		self.Center()
+		self.Show(True)
+
+	def init_ui(self):
 		# Create a top level panel so it looks correct on all platforms.
 		self.panel = wx.Panel(self, wx.ID_ANY)
 
@@ -26,13 +45,10 @@ class MainWindow(wx.Frame):
 		# Expand all for horizontal expansion.
 		main_sizer.Add(title_sizer, proportion=0, flag=wx.ALL | wx.EXPAND)
 		# Expand all for horizontal expansion.
-		main_sizer.Add(content_sizer, proportion=9, flag=wx.ALL | wx.EXPAND)
+		main_sizer.Add(content_sizer, proportion=1, flag=wx.ALL | wx.EXPAND)
 
 		# Set panel sizer.
 		self.panel.SetSizer(main_sizer)
-
-		# Show window.
-		self.Show(True)
 
 	def get_title_sizer(self, title):
 		"""
@@ -73,7 +89,7 @@ class MainWindow(wx.Frame):
 		# Create and add horizontal sizer for rendering the plots.
 		plot_sizer = self.get_plot_sizer()
 		# Expand all for vertical expansion.
-		content_sizer.Add(plot_sizer, proportion=8, \
+		content_sizer.Add(plot_sizer, proportion=1, \
 			flag=wx.EXPAND | wx.ALL)
 
 		# Return sizer.
@@ -88,29 +104,37 @@ class MainWindow(wx.Frame):
 		input_grid = wx.GridBagSizer(vgap=0, hgap=20)
 
 		# Create language label and dropdown.
+		language_options = list(self.language_options.keys())
 		language_select_label = wx.StaticText(self.panel, label="Language", \
 			pos=(50, 0))
-		language_select_dropdown = wx.Choice(self.panel, \
-			choices=["Norwegian (Bokmal)", "ghghghghghghgh"], \
-			size=wx.Size(150, 25))
+		self.language_select_dropdown = wx.Choice(self.panel, \
+			choices=language_options, size=wx.Size(150, 25))
+		self.language_select_dropdown.SetSelection(0)
+		self.Bind(wx.EVT_CHOICE, self.language_select_event, \
+			self.language_select_dropdown)
 
 		# Create plot selector label and dropdown.
+		plot_options = self.language_options[language_options[0]]
 		plot_select_label = wx.StaticText(self.panel, label="Plot")
-		plot_select_dropdown = wx.Choice(self.panel, \
-			choices=["Banana", "Mango"], size=wx.Size(150, 25))
+		self.plot_select_dropdown = wx.Choice(self.panel, \
+			choices=plot_options, size=wx.Size(150, 25))
+		self.plot_select_dropdown.SetSelection(0)
+		self.Bind(wx.EVT_CHOICE, self.plot_select_event, \
+			self.plot_select_dropdown)
 
 		# Create `Regenerate plots` button.
 		regen_plots_button = wx.Button(self.panel, label="Regenerate plots", \
 			size=(106, 27))
+		self.Bind(wx.EVT_BUTTON, self.regenerate_plots, regen_plots_button)
 
 		# Add components to input grid.
 		input_grid.Add(language_select_label, pos=(0, 0), \
 			flag=wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL)
-		input_grid.Add(language_select_dropdown, pos=(0, 1), \
+		input_grid.Add(self.language_select_dropdown, pos=(0, 1), \
 			flag=wx.ALIGN_RIGHT)
 		input_grid.Add(plot_select_label, pos=(1, 0), \
 			flag=wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL)
-		input_grid.Add(plot_select_dropdown, pos=(1, 1), \
+		input_grid.Add(self.plot_select_dropdown, pos=(1, 1), \
 			flag=wx.ALIGN_RIGHT)
 		input_grid.Add(regen_plots_button, pos=(2, 0), span=(1, 2), \
 			flag=wx.ALIGN_CENTER_HORIZONTAL)
@@ -125,15 +149,9 @@ class MainWindow(wx.Frame):
 		""""""
 		# Create plot sizer, make member to be able to get its size.
 		self.plot_sizer = wx.BoxSizer(wx.VERTICAL)
-		
-		# Create image object, make member to be able to scale on window 
-		# resize.
-		self.plot_image = wx.Image(\
-			"doc/images/loading_screen_layout_v1.png", wx.BITMAP_TYPE_ANY)
-		# Create image control with dummy image, make member to be able to
-		# update the image.
+
+		# Create image control, make member to be able to update the image.
 		self.plot_image_holder = wx.StaticBitmap(self.panel)
-		self.plot_image_holder.SetBitmap(wx.Bitmap(self.plot_image))
 
 		# Add image control to plot sizer.
 		self.plot_sizer.Add(self.plot_image_holder, flag=wx.EXPAND | wx.ALL, \
@@ -142,7 +160,127 @@ class MainWindow(wx.Frame):
 		# Return plot sizer.
 		return self.plot_sizer
 
+	def load_images(self, username=""):
+		"""
+		Reloads plot images from disk, changes the username if it's not empty.
+		Updates the self.plots_dict dictionary. Also updates dropdown options.
+		"""
+		# Update username if required.
+		if not username == "":
+			self.username = username
+
+		# Construct base folder.
+		base_folder = f"figures/{self.username}"
+
+		# Initialize language dropdown dictionary and plot image dictionary.
+		self.plots_dict = {}
+		self.language_options = {}
+
+		# Load plot images from figures/ folder and create choice option list.
+		language_folders = os.listdir(base_folder)
+		for lang in language_folders:
+			# Create language entry.
+			lang_capitalized = f"{lang[0].upper()}{lang[1:]}"
+			self.plots_dict[lang_capitalized] = {}
+			self.language_options[lang_capitalized] = []
+
+			# Load images.
+			for plot_name \
+				in ["daily_xp", "total_xp", "total_words_learned", "level"]:
+				plot_name_capitalized = f"{plot_name[0].upper()}" \
+					f"{plot_name[1:]}".replace("_", " ")
+				image = wx.Image(f"{base_folder}/{lang}/{plot_name}.png", \
+					wx.BITMAP_TYPE_ANY)
+
+				if not image.IsOk():
+					#print(f"Image not ok: {lang}/{plot_name}")
+					continue
+
+				self.plots_dict[lang_capitalized][plot_name_capitalized] = \
+					image
+				self.language_options[lang_capitalized]\
+					.append(plot_name_capitalized)
+				#print(f"Image ok: {lang}/{plot_name}")
+
+	def language_select_event(self, event):
+		"""
+		Gets called when the language choice menu triggers and event. Update
+		the plot options to match the available plots for the selected
+		language. Reset the plot options dropdown if the currently selected
+		choice does not exist for the new language. Then update the plot
+		image.
+		"""
+		# Get currently selected plot.
+		selected_plot_index = \
+			self.plot_select_dropdown.GetSelection()
+		selected_plot_string = \
+			self.plot_select_dropdown.GetString(selected_plot_index)
+
+		# Get currently selected language.
+		selected_lang_index = \
+			self.language_select_dropdown.GetSelection()
+		selected_lang_string = \
+			self.language_select_dropdown.GetString(selected_lang_index)
+
+		# Update plot options dropdown.
+		plot_options = self.language_options[selected_lang_string]
+		self.plot_select_dropdown.Clear()
+		for option in plot_options:
+			self.plot_select_dropdown.Append(option)
+
+		# Check if currently selected language also features the previously
+		# selected plot.
+		if selected_plot_string in plot_options:
+			# Get index of previous selection in new options list.
+			previous_selection_index = \
+				plot_options.index(selected_plot_string)
+			# Set selection id.
+			self.plot_select_dropdown.SetSelection(previous_selection_index)
+		else:
+			# Selected language does not feature the previously selected plot
+			# option, reset the selection to index 0.
+			self.plot_select_dropdown.SetSelection(0)
+
+		# Update the plot image.
+		self.update_image()
+
+	def plot_select_event(self, event):
+		"""
+		Gets called when the plot choice menu triggers an event. Updates the
+		plot image.
+		"""
+		# Update the plot image.
+		self.update_image()
+
+	def update_image(self):
+		"""
+		Update the bitmap component of the plot image holder to the selected
+		plot.
+		"""
+		# Get selected language in string format.
+		selected_language_index = \
+			self.language_select_dropdown.GetSelection()
+		selected_language = \
+			self.language_select_dropdown.GetString(selected_language_index)
+
+		# Get select plot in string format.
+		selected_plot_index = \
+			self.plot_select_dropdown.GetSelection()
+		selected_plot = \
+			self.plot_select_dropdown.GetString(selected_plot_index)
+
+		# Get image object.
+		image = self.plots_dict[selected_language][selected_plot]
+
+		# Set bitmap component of holder.
+		self.plot_image_holder.SetBitmap(wx.Bitmap(image))
+
+	def regenerate_plots(self, event):
+		""""""
+		# Comment.
+		print("Regenerate plots")
+
 if __name__ == "__main__":
 	app = wx.App(False)
-	window = MainWindow(None, "Duolingo Data Visualizer")
+	window = MainWindow(None, "Duolingo Data Visualizer", "Rubenanz")
 	app.MainLoop()

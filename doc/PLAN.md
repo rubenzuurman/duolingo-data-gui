@@ -17,17 +17,31 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 	2. Implement global layout in `wxPython`.
 	3. Implement the components of the interface (front-end).
 	4. Implement the components of the interface (back-end).
+		1. When a dropdown entry is changed, reload the image.
+		2. When the window is resized, scale the image, respecting its aspect ratio.
+		3. When the `Regenerate plots` button is clicked, regenerate the plots.
 3. Additional functionality.
 	1. Add plots with data from all languages combined.
 	2. Implement loading screen for when generating plots.
 	3. Abstract text into separate language file in order to support multiple languages.
+	4. Implement logger class for debugging purposes.
 
 ### Log
+### 12-02-2022
+*13:09*: Start development.<br />
+*13:49*: The dropdown menus and the `Regenerate plots` button now trigger an event which calls a function. Started development on loading the plots into a dictionary.<br />
+*13:55*: Stop development.<br /><br />
+
+*14:20*: Start development.<br />
+*15:19*: Language select and plot select now have separate event functions. The language event function updates the plot selection choice to the available plots for that language, and resets the selection if the previously selected plot is not available for the selected language.<br />
+*15:22*: Added `milestone 3.4`.<br />
+*15:35*: The correct plot images are now shown corresponding to the selection made in the dropdown menus.<br />
+
 ### 11-02-2022
 *13:30*: Start development.<br />
 *13:33*: Added restriction `(front-end)` to `milestone 2.3`.<br />
-*13:33*: Added `milestoen 2.4`.<br />
-*14:29*: Replaced the `wx.GridSizer` for user input with a `wx.GridBagSizer`, which is way easier to work with. The the labels in the gridsizer are more or less centered (the flag has been set and after a lot of tweaking I decided it is not *that* important). The `Regenerate plots` button spans two columns now.<br />
+*13:33*: Added `milestone 2.4`.<br />
+*14:29*: Replaced the `wx.GridSizer` for user input with a `wx.GridBagSizer` because of [this stackoverflow post](https://stackoverflow.com/questions/35071802/how-can-i-make-a-wxpython-widget-span-two-cells-without-pushing-other-widgets-as), which is way easier to work with. The the labels in the gridsizer are more or less centered (the flag has been set and after a lot of tweaking I decided it is not *that* important). The `Regenerate plots` button spans two columns now.<br />
 *14:32*: Stop development.<br /><br />
 
 *15:29*: Start development.<br />
@@ -35,7 +49,9 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *15:58*: The plot sizer now contains the dummy image `doc/images/loading_screen_layout_v1.png`. It does not yet resize with the window, this is part of back-end development.<br />
 *16:01*: Changed window title and title text to `Duolingo Data Visualizer`. Window title was `Hello world` and the title text was `Duolingo Statistics Viewer`.<br />
 *16:04*: Updated `doc/requirements.txt`.<br />
-
+*16:10*: Commit changes to branch `gui-development`.<br />
+*16:21*: Added three submilestones to `milestone 2.4`, outlining the steps to be taken.<br />
+*16:21*: Stop development.
 
 ### 10-02-2022
 *10:51*: Start development.<br />
