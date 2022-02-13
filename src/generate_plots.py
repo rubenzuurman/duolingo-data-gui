@@ -133,7 +133,8 @@ def export_plots(lang_dict: dict, username: str):
 		# Define save paths.
 		daily_xp_path = f"figures/{username}/{lang}/daily_xp.png"
 		total_xp_path = f"figures/{username}/{lang}/total_xp.png"
-		total_words_learned_path = f"figures/{username}/{lang}/total_words_learned.png"
+		total_words_learned_path = \
+			f"figures/{username}/{lang}/total_words_learned.png"
 		level_path = f"figures/{username}/{lang}/level.png"
 
 		# Calculate xmin and xmax, subtract month from xmin and add month to
@@ -142,7 +143,7 @@ def export_plots(lang_dict: dict, username: str):
 		xmin = min(seconds_since_epoch_col) - (86400 * extra_days)
 		xmax = max(seconds_since_epoch_col) + (86400 * extra_days)
 		xticks_rotation = 60
-		plot_dpi = 200
+		plot_dpi = 400
 
 		# Plot daily xp and save to file.
 		fig, ax = plt.subplots()
@@ -188,3 +189,9 @@ def export_plots(lang_dict: dict, username: str):
 		ax.set_xlim(xmin, xmax)
 		fig.tight_layout()
 		fig.savefig(level_path, dpi=plot_dpi)
+
+	# Close all figures, if this is not done memory will stay allocated and
+	# wxpython will not be able to exit the mainloop. Also if this is not done
+	# matplotlib will keep the figures in memory and throw a warning once the
+	# number of figures in memory exceeds 20.
+	plt.close("all")

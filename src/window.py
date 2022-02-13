@@ -2,6 +2,8 @@ import os
 
 import wx
 
+import generate_plots as gp
+
 class MainWindow(wx.Frame):
 	"""
 	This class represents the main window and its contents.
@@ -18,6 +20,9 @@ class MainWindow(wx.Frame):
 		# Save username variable.
 		self.username = username
 
+		# Regenerate plots.
+		self.regenerate_plots(called_from_constructor=True)
+
 		# Load plot images from figures/ folder and create choice option list.
 		self.load_images(username)
 
@@ -31,7 +36,8 @@ class MainWindow(wx.Frame):
 		# Initial image update.
 		self.update_image()
 
-		self.Bind(wx.EVT_SIZE, self.resize_event)
+		# Bind window resize event.
+		self.Bind(wx.EVT_SIZE,  self.on_resize)
 
 	def init_ui(self):
 		"""
@@ -102,7 +108,7 @@ class MainWindow(wx.Frame):
 
 	def get_user_input_sizer(self):
 		"""
-		Returns the user input sizer.
+		Creates and returns the user input sizer.
 		"""
 		# Create user input sizer.
 		user_input_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -132,7 +138,8 @@ class MainWindow(wx.Frame):
 		# Create `Regenerate plots` button.
 		regen_plots_button = wx.Button(self.panel, label="Regenerate plots", \
 			size=(106, 27))
-		self.Bind(wx.EVT_BUTTON, self.regenerate_plots, regen_plots_button)
+		self.Bind(wx.EVT_BUTTON, self.regenerate_plots_event, \
+			regen_plots_button)
 
 		# Add components to input grid.
 		input_grid.Add(language_select_label, pos=(0, 0), \
@@ -154,7 +161,7 @@ class MainWindow(wx.Frame):
 
 	def get_plot_sizer(self):
 		"""
-		Returns the plot sizer.
+		Creates and returns the plot sizer.
 		"""
 		# Create plot sizer, make member to be able to get its size.
 		self.plot_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -211,7 +218,7 @@ class MainWindow(wx.Frame):
 					.append(plot_name_capitalized)
 				#print(f"Image ok: {lang}/{plot_name}")
 
-	def resize_event(self, event):
+	def on_resize(self, event):
 		"""
 		Gets called when the window is resized.
 		"""
@@ -317,19 +324,44 @@ class MainWindow(wx.Frame):
 		if sh_image_width <= sizer_width:
 			# Scale to match height.
 			image = self.plot_image.Scale(sh_image_width, sh_image_height)
-			self.plot_image_holder.SetBitmap(wx.Bitmap(image))
 		# Check if scaling by width makes the image not too tall.
 		else:
 			# Scale to match width.
 			image = self.plot_image.Scale(sw_image_width, sw_image_height)
-			self.plot_image_holder.SetBitmap(wx.Bitmap(image))
 
-	def regenerate_plots(self, event):
-		""""""
-		# Comment.
-		print("Regenerate plots")
+		# Update the bitmap image component of the plot_image_holder.
+		self.plot_image_holder.SetBitmap(wx.Bitmap(image))
 
-if __name__ == "__main__":
-	app = wx.App(False)
-	window = MainWindow(None, "Duolingo Data Visualizer", "Rubenanz")
-	app.MainLoop()
+	def regenerate_plots_event(self, event):
+		"""
+		Called when the `Regenerate plots` button is clicked. Used as a 
+		wrapper for regenerate_plots(), so that the function can also be 
+		called without an event.
+		"""
+		# Regenerate plots.
+		self.regenerate_plots()
+
+	def regenerate_plots(self, called_from_constructor=False):
+		"""
+		Creates the plot images and saves them to the folder 
+		figures/{self.username}. The `after_creation` flag serves to indicate
+		whether this function is called from the Frame constructor or from an
+		event. If this function is called from the Frame constructor it does 
+		not need to reload the images and update the image, because this is 
+		done separately at specific moments in the constructor.
+		"""
+		# Load data.
+		lang_dict = gp.load_data(self.username)
+		# Add time in seconds since epoch column.
+		lang_dict = gp.add_time_column(lang_dict)
+		# Export plots as images.
+		gp.export_plots(lang_dict, self.username)
+
+		# If not called from the constructor, reload the images and update the
+		# image on the screen.
+		if not called_from_constructor:
+			# Reload the images.
+			self.load_images()
+
+			# Update the image.
+			self.update_image()

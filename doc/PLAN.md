@@ -23,15 +23,28 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 		4. When the `Regenerate plots` button is clicked, regenerate the plots.
 3. Additional functionality.
 	1. Add plots with data from all languages combined.
-	2. Implement loading screen for when generating plots.
+	2. Implement loading screen for when generating and loading plots.
 	3. Abstract text into separate language file in order to support multiple languages.
 	4. Implement logger class for debugging purposes.
+	5. Add settings menu containing settings for plot generation.
+		- Line color (for single languages)
+		- DPI (comprise of generation speed and resolution)
+		- Line thickness
+		- Current username
+		- More...
 
 ### Log
 ### 13-02-2022
 *13:01*: Start development.<br />
 *13:01*: Moved `milestone 2.4.3` to `milestone 2.4.4`.<br />
 *13:02*: Added `milestone 2.4.3`.<br />
+*13:07*: Commit changes to branch `gui-development`.<br />
+*13:12*: The user interface is now executed after the plots are generated in `src/application.py`.<br />
+*13:50*: Integrated the generation of plots into the wxpython window. There was a bug where the application would not quit when the window was closed. This happened due to the fact that matplotlib does not automatically delete figures from memory. This inhibited the wxpython mainloop from exiting. Adding a `plt.close("all")` call to `src/generate_plots.py:export_plots()` function resolved the issue. The `Regenerate plots` button now also works, although there is no feedback as to what it is doing when this button is clicked. The application just freezes, and unfreezes once it is done.<br />
+*14:05*: The `src/window.py:regenerate_plots()` function is now complete and functional, it exports the images and (if the function was not called from the constructor) reloads the images and updates the image on the screen. This implementation satisfies `milestone 2.4`.<br />
+*14:12*: Changed some comments and restructured small portions of the code.<br />
+*14:14*: Added `and loading` to `milestone 3.2`.<br />
+*14:16*: Added `milestone 3.5`.<br />
 
 ### 12-02-2022
 *13:09*: Start development.<br />
