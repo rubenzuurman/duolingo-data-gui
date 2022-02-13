@@ -133,3 +133,4 @@ dmypy.json
 doc/PLAN.html
 data/
 figures/
+logs/

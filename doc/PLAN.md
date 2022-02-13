@@ -45,6 +45,14 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *14:12*: Changed some comments and restructured small portions of the code.<br />
 *14:14*: Added `and loading` to `milestone 3.2`.<br />
 *14:16*: Added `milestone 3.5`.<br />
+*14:27*: Commited changes to branch `gui-development`. Merged branch `gui-development` into branch `main`. Tried to `git push origin main` the changes, but it got rejected. Every time you start working on the project you should do a `git pull` to make sure you are up to date with the latest changes of the remote repository. The issue, in this case, was that I set up the `Bug report` and `Feature request` templates on the remote branch.<br />
+*14:30*: Stop development.<br /><br />
+
+*20:21*: Start development.<br />
+*20:23*: Create branch `logger` for the logger class implementation.<br />
+*20:23*: Create file `src/logger.py`.<br />
+*21:04*: Implemented basic logger functionalities, which include holding a collecting of all messages submitted, distinction between the INFO, DEBUG and ERROR loglevels, and saving the log messages to a log file.<br />
+*21:16*: Added/changed some comments/docstrings in `src/logger.py`.<br />
 
 ### 12-02-2022
 *13:09*: Start development.<br />
