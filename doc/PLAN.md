@@ -19,7 +19,8 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 	4. Implement the components of the interface (back-end).
 		1. When a dropdown entry is changed, reload the image.
 		2. When the window is resized, scale the image, respecting its aspect ratio.
-		3. When the `Regenerate plots` button is clicked, regenerate the plots.
+		3. Integrate user interface into main application.
+		4. When the `Regenerate plots` button is clicked, regenerate the plots.
 3. Additional functionality.
 	1. Add plots with data from all languages combined.
 	2. Implement loading screen for when generating plots.
@@ -27,6 +28,11 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 	4. Implement logger class for debugging purposes.
 
 ### Log
+### 13-02-2022
+*13:01*: Start development.<br />
+*13:01*: Moved `milestone 2.4.3` to `milestone 2.4.4`.<br />
+*13:02*: Added `milestone 2.4.3`.<br />
+
 ### 12-02-2022
 *13:09*: Start development.<br />
 *13:49*: The dropdown menus and the `Regenerate plots` button now trigger an event which calls a function. Started development on loading the plots into a dictionary.<br />
@@ -36,6 +42,18 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *15:19*: Language select and plot select now have separate event functions. The language event function updates the plot selection choice to the available plots for that language, and resets the selection if the previously selected plot is not available for the selected language.<br />
 *15:22*: Added `milestone 3.4`.<br />
 *15:35*: The correct plot images are now shown corresponding to the selection made in the dropdown menus.<br />
+*15:44*: Commit changes to branch `gui-development`.<br />
+*15:45*: Stop development.<br /><br />
+
+*17:10*: Start development.<br />
+*18:33*: The plot image now resizes correctly when the window is resized. When a new plot or language is selected though, the image aligns left for some reason. After resizing the window it centers again. I have no clue how this happens.<br />
+*18:35*: Stop development.<br /><br />
+
+*21:21*: Start development.<br />
+*21:23*: Set up bug report and feature request templates for the github repository using the standard templates.<br />
+*21:54*: Added `issue 2`, which is a bug where the plot image misaligns if the window was resized vertically last. The bug will be ignored until I feel like fixing it.<br />
+*22:09*: Added some comments and docstrings.<br />
+*22:09*: Stop development.
 
 ### 11-02-2022
 *13:30*: Start development.<br />

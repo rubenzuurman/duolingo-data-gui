@@ -24,14 +24,19 @@ class MainWindow(wx.Frame):
 		# Init UI.
 		self.init_ui()
 
-		# Initial image update.
-		self.update_image()
-
 		# Show window.
 		self.Center()
 		self.Show(True)
 
+		# Initial image update.
+		self.update_image()
+
+		self.Bind(wx.EVT_SIZE, self.resize_event)
+
 	def init_ui(self):
+		"""
+		Initialize UI.
+		"""
 		# Create a top level panel so it looks correct on all platforms.
 		self.panel = wx.Panel(self, wx.ID_ANY)
 
@@ -96,7 +101,9 @@ class MainWindow(wx.Frame):
 		return content_sizer
 
 	def get_user_input_sizer(self):
-		""""""
+		"""
+		Returns the user input sizer.
+		"""
 		# Create user input sizer.
 		user_input_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -146,7 +153,9 @@ class MainWindow(wx.Frame):
 		return user_input_sizer
 
 	def get_plot_sizer(self):
-		""""""
+		"""
+		Returns the plot sizer.
+		"""
 		# Create plot sizer, make member to be able to get its size.
 		self.plot_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -201,6 +210,15 @@ class MainWindow(wx.Frame):
 				self.language_options[lang_capitalized]\
 					.append(plot_name_capitalized)
 				#print(f"Image ok: {lang}/{plot_name}")
+
+	def resize_event(self, event):
+		"""
+		Gets called when the window is resized.
+		"""
+		# Run normal window resize stuff.
+		event.Skip()
+		# Rescale image.
+		self.rescale_image()
 
 	def language_select_event(self, event):
 		"""
@@ -269,11 +287,42 @@ class MainWindow(wx.Frame):
 		selected_plot = \
 			self.plot_select_dropdown.GetString(selected_plot_index)
 
-		# Get image object.
-		image = self.plots_dict[selected_language][selected_plot]
+		# Set plot_image to image object from dictionary.
+		self.plot_image = self.plots_dict[selected_language][selected_plot]
 
-		# Set bitmap component of holder.
-		self.plot_image_holder.SetBitmap(wx.Bitmap(image))
+		# Rescale the image.
+		self.rescale_image()
+
+	def rescale_image(self):
+		"""
+		Scales the set plot_image to match either the width or the height of
+		the plot_sizer, whichever makes the image be entirely visible.
+		"""
+		# Get width and height of plot sizer.
+		sizer_width, sizer_height = self.plot_sizer.GetSize()
+
+		# Get width and height of image.
+		image_width, image_height = self.plot_image.GetSize()
+		image_aspect = image_width / image_height
+
+		# Scale to match sizer height.
+		sh_image_width  = int(sizer_height * image_aspect)
+		sh_image_height = int(sizer_height)
+
+		# Scale to match sizer width.
+		sw_image_width  = int(sizer_width)
+		sw_image_height = int(sizer_width / image_aspect)
+
+		# Check if scaling by height makes the image not too wide.
+		if sh_image_width <= sizer_width:
+			# Scale to match height.
+			image = self.plot_image.Scale(sh_image_width, sh_image_height)
+			self.plot_image_holder.SetBitmap(wx.Bitmap(image))
+		# Check if scaling by width makes the image not too tall.
+		else:
+			# Scale to match width.
+			image = self.plot_image.Scale(sw_image_width, sw_image_height)
+			self.plot_image_holder.SetBitmap(wx.Bitmap(image))
 
 	def regenerate_plots(self, event):
 		""""""
