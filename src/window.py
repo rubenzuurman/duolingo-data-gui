@@ -8,8 +8,7 @@ class MainWindow(wx.Frame):
 	"""
 	This class represents the main window and its contents.
 	"""
-
-	def __init__(self, parent, title, username):
+	def __init__(self, parent, title, username, logger):
 		"""
 		Initialize superclass, add sizers with content returned from 
 		functions, and show the window.
@@ -17,24 +16,45 @@ class MainWindow(wx.Frame):
 		# Initialize superclass.
 		wx.Frame.__init__(self, parent, title=title, size=(1280, 720))
 
-		# Save username variable.
+		# Save variables.
+		self.parent = parent
+		self.title = title
 		self.username = username
+		self.logger = logger
 
-		# Regenerate plots.
+		# Show message that the user interface has been started.
+		self.logger.log_info("User interface started")
+
+		# Global variable indicating the user data has been loaded correctly.
+		self.user_data_ok = True
+
+		# Regenerate plots, sets the self.user_data_ok variable accordingly.
 		self.regenerate_plots(called_from_constructor=True)
 
-		# Load plot images from figures/ folder and create choice option list.
-		self.load_images(username)
+		# Bind close event before initializing user interface. This is done to
+		# make sure the `user interface stopped` is shown when the window is 
+		# closed due to self.user_data_ok being equal to False.
+		# Bind window close event.
+		self.Bind(wx.EVT_CLOSE, self.on_close)
 
-		# Init UI.
-		self.init_ui()
+		# Only initialize the user interface if the user data was ok.
+		if self.user_data_ok:
+			# Load plot images from figures/ folder and create choice option
+			# list.
+			self.load_images(username)
 
-		# Show window.
-		self.Center()
-		self.Show(True)
+			# Init UI.
+			self.init_ui()
 
-		# Initial image update.
-		self.update_image()
+			# Show window.
+			self.Center()
+			self.Show(True)
+
+			# Initial image update.
+			self.update_image()
+		# If the user data was not ok, close the window.
+		else:
+			self.Close()
 
 		# Bind window resize event.
 		self.Bind(wx.EVT_SIZE,  self.on_resize)
@@ -43,6 +63,9 @@ class MainWindow(wx.Frame):
 		"""
 		Initialize UI.
 		"""
+		# Create start log message.
+		self.logger.log_info("Initializing UI...")
+
 		# Create a top level panel so it looks correct on all platforms.
 		self.panel = wx.Panel(self, wx.ID_ANY)
 
@@ -60,6 +83,9 @@ class MainWindow(wx.Frame):
 
 		# Set panel sizer.
 		self.panel.SetSizer(main_sizer)
+
+		# Create end log message.
+		self.logger.log_info("Done initializing UI")
 
 	def get_title_sizer(self, title):
 		"""
@@ -181,6 +207,9 @@ class MainWindow(wx.Frame):
 		Reloads plot images from disk, changes the username if it's not empty.
 		Updates the self.plots_dict dictionary. Also updates dropdown options.
 		"""
+		# Create start log message.
+		self.logger.log_info("Loading images...")
+
 		# Update username if required.
 		if not username == "":
 			self.username = username
@@ -191,6 +220,11 @@ class MainWindow(wx.Frame):
 		# Initialize language dropdown dictionary and plot image dictionary.
 		self.plots_dict = {}
 		self.language_options = {}
+
+		# Set up variables to count how many images loaded successfully, and 
+		# how many failed.
+		successful = 0
+		failed = 0 
 
 		# Load plot images from figures/ folder and create choice option list.
 		language_folders = os.listdir(base_folder)
@@ -209,23 +243,42 @@ class MainWindow(wx.Frame):
 					wx.BITMAP_TYPE_ANY)
 
 				if not image.IsOk():
-					#print(f"Image not ok: {lang}/{plot_name}")
+					self.logger.log_error(f"Failed to load image " \
+						f"`{base_folder}/{lang}/{plot_name}.png`!")
+					failed += 1
 					continue
 
 				self.plots_dict[lang_capitalized][plot_name_capitalized] = \
 					image
 				self.language_options[lang_capitalized]\
 					.append(plot_name_capitalized)
-				#print(f"Image ok: {lang}/{plot_name}")
+				self.logger.log_info("Succesfully loaded image " \
+					f"`{base_folder}/{lang}/{plot_name}.png`")
+				successful += 1
+
+		# Create end log message.
+		self.logger.log_info("Done loading images " \
+			f"({successful} successful, {failed} failed)")
 
 	def on_resize(self, event):
 		"""
 		Gets called when the window is resized.
 		"""
-		# Run normal window resize stuff.
+		# Run normal window resize event stuff.
 		event.Skip()
-		# Rescale image.
+
+		# Rescale and update image.
 		self.rescale_image()
+
+	def on_close(self, event):
+		"""
+		Gets called when the window is closed.
+		"""
+		# Run normal window close event stuff.
+		event.Skip()
+
+		# Show message that the user interface has been stopped.
+		self.logger.log_info("User interface stopped")
 
 	def language_select_event(self, event):
 		"""
@@ -350,12 +403,25 @@ class MainWindow(wx.Frame):
 		not need to reload the images and update the image, because this is 
 		done separately at specific moments in the constructor.
 		"""
-		# Load data.
-		lang_dict = gp.load_data(self.username)
-		# Add time in seconds since epoch column.
-		lang_dict = gp.add_time_column(lang_dict)
-		# Export plots as images.
-		gp.export_plots(lang_dict, self.username)
+		# Load data, returns false if the userfolder does not exist.
+		lang_dict = gp.load_data(self.username, self.logger)
+		# Update user_data_ok variable.
+		self.user_data_ok = not not lang_dict
+		# If the data is not ok, show dialog and don't try to export.
+		if self.user_data_ok:
+			# Add time in seconds since epoch column.
+			lang_dict = gp.add_time_column(lang_dict, self.logger)
+			# Export plots as images.
+			gp.export_plots(lang_dict, self.username, self.logger)
+		else:
+			# Show dialog that the data was not ok.
+			userfolder_not_exist_dialog = \
+				wx.MessageDialog(parent=self, \
+					message=f"Failed to load data files for user " \
+					f"`{self.username}`: user folder " \
+					f"`data/{self.username}/` does not exist.", \
+					caption="Failed to load data files", style=wx.OK)
+			userfolder_not_exist_dialog.ShowModal()
 
 		# If not called from the constructor, reload the images and update the
 		# image on the screen.

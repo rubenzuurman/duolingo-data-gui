@@ -34,6 +34,23 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 		- More...
 
 ### Log
+### 15-02-2022
+*16:04*: Start development.<br />
+*16:50*: Added log messages to `src/application.py`. Added log messages to `src/generate_plots.py` where missing. Refactored `src/generate_plots.py:export_plots()` to be shorter and with less loops setting variables that get checked in if statement where a direct comparison would be shorter and more concise.<br />
+*17:24*: If the user folder does not exist, a dialog is shown, the user interface is NOT initiated and the window is closed.<br />
+*17:35*: The `User interface stopped` message was previously not shown if the user folder did not exist, due to the fact that the close event was bound after closing the window from the `__init__` function. The close event now gets bound before the check if the user data was ok, the message gets shown as required now.<br />
+
+### 14-02-2022
+*11:10*: Start development.<br />
+*11:25*: Added `issue 3`, which contains a bug description: when the window is resized be dragging it to the left, right or top edge of the screen, the plot image is not resized correctly.<br />
+*11:39*: Implemented logger class into `src/generate_plots.py:load_data()`, removed the `FileNotFoundException` and replaced it with an error message and returning `False` from the function. This value of `False` can then be caught by the calling function.<br />
+*11:59*: The calling function in this case was `src/window.py:regenerate_plots()`, this function has been changed to update the `self.user_data_ok` variable by setting it to `not not result`, where `result` is the return value of the `regenerate_plots()` function. It will also not try to add the time column or export the images. The next task is to make the function `src/generate_plots.py:add_time_column()` log error- and info messages when necessary, and to catch the errors in the calling function, which is `regenerate_plots()`.<br />
+*12:15*: Implemented logger class into `src/generate_plots.py:add_time_column()`. If a dataframe does not have a `date` column, the `seconds_since_epoch` column does not get added. For now, if the dataframe does not have a `date` column, it will be skipped.<br />
+*12:27*: Added `issue 4`, which is a feature request: if the `date` column is missing from a data file for some reason, the `date` column could be generated automatically by assuming the last entry is from today and then counting back in time upwards in the data file. This way the data can be displayed, currently it cannot be displayed.<br />
+*12:54*: Implemented logger class into function `src/generate_plots.py:export_plots()`. Language folders no longer get created if the `date` column is missing, this will be reverted once `issue 4` is implemented. Also, a check is added which checks if the requested data columns are presented, if this is not the case, the plot will not be generated. Currently, this involves a lot of if statements, which doesn't look pretty. A resolution would be to create booleans upfront which hold `True` if the plot needs to be generated, and `False` if this is not the case. It would also be good to abstract a function to export the plot, as this code is repeated four times at the moment.<br />
+*13:01*: The next task is to check all source files for logger implementation first, and then check for typos and such.<br />
+*13:03*: Stop development.
+
 ### 13-02-2022
 *13:01*: Start development.<br />
 *13:01*: Moved `milestone 2.4.3` to `milestone 2.4.4`.<br />
@@ -45,7 +62,7 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *14:12*: Changed some comments and restructured small portions of the code.<br />
 *14:14*: Added `and loading` to `milestone 3.2`.<br />
 *14:16*: Added `milestone 3.5`.<br />
-*14:27*: Commited changes to branch `gui-development`. Merged branch `gui-development` into branch `main`. Tried to `git push origin main` the changes, but it got rejected. Every time you start working on the project you should do a `git pull` to make sure you are up to date with the latest changes of the remote repository. The issue, in this case, was that I set up the `Bug report` and `Feature request` templates on the remote branch.<br />
+*14:27*: Committed changes to branch `gui-development`. Merged branch `gui-development` into branch `main`. Tried to `git push origin main` the changes, but it got rejected. Every time you start working on the project you should do a `git pull` to make sure you are up to date with the latest changes of the remote repository. The issue, in this case, was that I set up the `Bug report` and `Feature request` templates on the remote branch.<br />
 *14:30*: Stop development.<br /><br />
 
 *20:21*: Start development.<br />
@@ -53,6 +70,9 @@ The goal of this project is to have a GUI in which duolingo data can be visualiz
 *20:23*: Create file `src/logger.py`.<br />
 *21:04*: Implemented basic logger functionalities, which include holding a collecting of all messages submitted, distinction between the INFO, DEBUG and ERROR loglevels, and saving the log messages to a log file.<br />
 *21:16*: Added/changed some comments/docstrings in `src/logger.py`.<br />
+*21:18*: Commit changes to branch `logger`.<br />
+*21:32*: Implemented logger class into `window.py`. The next thing to do is to implement it into `generate_plots.py`.<br />
+*21:33*: Stop development.
 
 ### 12-02-2022
 *13:09*: Start development.<br />

@@ -40,6 +40,8 @@ class Logger:
 		# Get start date and time.
 		self.filename = datetime.now().strftime("LOG_%Y_%m_%d_%H_%M_%S.txt")
 
+		self.log_info("Logger initialized")
+
 	def output_to_file(self):
 		"""
 		Outputs all submitted messages to a log file in the folder `logs`.
@@ -136,13 +138,3 @@ class Logger:
 
 		# Set loglevel.
 		self.loglevel = loglevel
-
-def main():
-	logger = Logger()
-	logger.log_error("hello error")
-	logger.log_debug("hello debug")
-	logger.log_info("hello info")
-	logger.output_to_file()
-
-if __name__ == "__main__":
-	main()
